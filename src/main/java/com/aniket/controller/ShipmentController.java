@@ -51,4 +51,27 @@ public class ShipmentController {
 		
 		return shipmentService.getAllShipmentsByCustomer_idAndStatus(customer_id, status); 
 	}
+	
+	@GetMapping("/getAllShipmentByDriver_id/{driver_id}/{status}")
+	public List<Shipment> getAllShipmentsByDriver_id(@PathVariable String driver_id, 
+			@PathVariable String status){
+		
+		if(status.equalsIgnoreCase("All")) {
+			return shipmentService.getAllShipmentByDriver_id(driver_id); 
+		}
+		
+		return shipmentService.getAllShipmentByDriver_idAndStatus(driver_id, status); 
+	}
+	
+	@PutMapping("/setStatus/{status}/{id}")
+	public Boolean setStatus(@PathVariable String status, @PathVariable Long id){
+		return shipmentService.setStatus(status, id); 
+	}
+	
+	@PutMapping("/updateLocation/{current_latitude}/{current_longitude}/{id}")
+	public Boolean setStatus(@PathVariable double current_latitude, @PathVariable double current_longitude,  @PathVariable Long id){
+		return shipmentService.updateLocation(current_latitude, current_longitude, id); 
+	}
+	
+	
 }

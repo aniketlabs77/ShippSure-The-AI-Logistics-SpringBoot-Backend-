@@ -78,4 +78,34 @@ public class DriverService {
 		}
 		return null;
 	}
+	
+	public List<Driver> findByCity(String city){
+		List<Driver> drivers = driverRepo.findAllByCity(city); 
+		for(Driver d : drivers) {
+			d.setDriving_license(null);
+			d.setVehicle_rc(null);
+			d.setPassword(null);
+		}
+		return drivers ; 
+	}
+	
+	public List<Driver> findByCityAndRideStatus(String city, String rideStatus){
+		List<Driver> drivers = driverRepo.findAllByCityAndRideStatus(city, rideStatus); 
+		for(Driver d : drivers) {
+			d.setDriving_license(null);
+			d.setVehicle_rc(null);
+			d.setPassword(null);
+		}
+		return drivers ; 
+	}
+
+	public List<Driver> findAllByStatusAndRideStatus(String status, String rideStatus) {
+		List<Driver> drivers = driverRepo.findAllByStatusAndRideStatus(status, rideStatus);
+		for (Driver d : drivers) {
+			d.setDriving_license(null);
+			d.setVehicle_rc(null);
+			d.setPassword(null);
+		}
+		return drivers;
+	}
 }

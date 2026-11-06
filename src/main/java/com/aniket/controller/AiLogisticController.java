@@ -17,11 +17,6 @@ public class AiLogisticController {
 	@Autowired 
 	AILogisticService aiLogisticsService ; 
 	
-	@PostMapping("/register")
-	public boolean register(@RequestBody Customer customer) {
-		return aiLogisticsService.register(customer);
-	}
-	
 	@PutMapping("/updatePassword")
 	public boolean updatePassword(@RequestBody List<String> data) {
 		return aiLogisticsService.updatePassword(data);

@@ -38,6 +38,6 @@ public class AdminService {
 			return driverRepo.findAll(); 
 		}
 		
-		return driverRepo.getAllByStatus(status); 
+		return driverRepo.findAllByStatus(status); 
 	}
 }

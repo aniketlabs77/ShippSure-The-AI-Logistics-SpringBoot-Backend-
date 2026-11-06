@@ -64,4 +64,19 @@ public class DriverController {
 		return driverService.setRideStatus(email);
 	}
 	
+	@GetMapping("/findByCity/{city}")
+	public List<Driver> findAllByCity(@PathVariable String city) {
+		return driverService.findByCity(city); 
+	}
+	
+	
+	@GetMapping("/findByCityAndRideStatus/{city}/{rideStatus}")
+	public List<Driver> findByCityAndRideStatus(@PathVariable String city,@PathVariable String rideStatus) {
+		return driverService.findByCityAndRideStatus(city, rideStatus); 
+	}
+	
+	@GetMapping("/findAllByStatusAndRideStatus/{status}/{rideStatus}")
+	public List<Driver> findByStatusAndRideStatus(@PathVariable String status, @PathVariable String rideStatus) {
+		return driverService.findAllByStatusAndRideStatus(status, rideStatus); 
+	}
 }
