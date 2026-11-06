@@ -3,7 +3,7 @@
 # ⚙️ SHIPPSURE — BACKEND RESTFUL LOGISTICS & DISPATCH SERVICE
 
 ### ⚡ Central Microservice Architecture & Fleet Telemetry Engine
-### 💻 Spring Boot 3 + Spring Data JPA + MySQL + Java 17
+### 💻 Spring Boot 3 + Spring Data JPA + MySQL + Hibernate 6 + Java 17
 
 <br/>
 
@@ -22,13 +22,13 @@
 
 ---
 
-## 📖 Overview
+## 📖 **Overview**
 
-> **ShippSure Backend** is a high-performance RESTful microservice built with **Java 17, Spring Boot, Spring Data JPA, and MySQL**.
+> **ShippSure Backend** is a high-performance RESTful microservice built with **Java 17, Spring Boot, Spring Data JPA, Hibernate, and MySQL**.
 
 It acts as the single source of truth for the entire ShippSure logistics network, handling **driver fleet telemetry**, **binary document storage**, **order lifecycles**, **geographical candidate discovery**, and **administrative oversight**.
 
-### 🎯 Key Responsibilities
+### 🎯 **Key Responsibilities**
 
 | Responsibility | Logo | Description |
 |----------------|:---:|-------------|
@@ -39,7 +39,7 @@ It acts as the single source of truth for the entire ShippSure logistics network
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ **Technology Stack**
 
 | Technology | Version | Logo | Description |
 |------------|---------|:---:|-------------|
@@ -52,9 +52,67 @@ It acts as the single source of truth for the entire ShippSure logistics network
 
 ---
 
-## 🏗️ System Architecture & Data Flow
+## 📋 **What I Worked On**
 
-### 📊 Component Breakdown:
+### ✅ **Task 1: RESTful Microservice Architecture & API Design**
+<img align="right" width="44" src="https://img.icons8.com/color/48/000000/api-settings.png"/>
+
+- Structured the backend service cleanly into Controllers, Services, Entities, and JPA Repositories.
+- Implemented standard RESTful conventions (`GET`, `POST`, `PUT`) returning JSON payloads.
+- Configured cross-service communication to accept secure requests from the Frontend microservice (Port 2222).
+
+**Technologies Used:** 🍃 Spring Web, 🌐 RESTful Design, ☕ Java 17
+
+---
+
+### ✅ **Task 2: Driver Fleet Entity & Binary Document Persistence**
+<img align="right" width="44" src="https://img.icons8.com/color/48/000000/delivery.png"/>
+
+- Created JPA `Driver` entity with support for vehicle type, license plate, city, and status flags.
+- Configured binary Large Object (BLOB) byte-array mapping to store uploaded Vehicle Registration Certificates (RC) and Driving Licenses directly in MySQL.
+- Designed endpoints `/driver/DriverRC` and `/driver/DriverLicense` to stream raw image bytes directly to admin inspection panels.
+
+**Technologies Used:** 📊 Spring Data JPA, 🗄️ BLOB Persistence, 📄 Multipart Streams
+
+---
+
+### ✅ **Task 3: Dual-Axis Driver State Machine (`Status` & `RideStatus`)**
+<img align="right" width="44" src="https://img.icons8.com/color/48/000000/synchronize.png"/>
+
+- Developed a dual-axis state machine for driver availability:
+  - **Account Verification Status:** Managed by Admin (`Pending` $\rightarrow$ `Activated` / `Rejected` / `Deactivated`).
+  - **Duty State Machine:** Managed by driver or dispatch (`Free` $\leftrightarrow$ `Busy`).
+- Implemented `/driver/setRideStatus/{email}` to toggle duty availability atomically during dispatch and delivery.
+
+**Technologies Used:** 🔄 State Machine Logic, 🍃 Spring Service Layer
+
+---
+
+### ✅ **Task 4: Shipment Lifecycle & Delivery Timestamp Engine**
+<img align="right" width="44" src="https://img.icons8.com/color/48/000000/box.png"/>
+
+- Designed `Shipment` entity tracking coordinates, vehicle class, amount, route addresses, and lifecycle.
+- Implemented lifecycle stages: `"Pending"` $\rightarrow$ `"InTransit"` $\rightarrow$ `"Delivered"` / `"Cancelled"`.
+- Added automatic delivery completion logic: when status transitions to `"Delivered"`, the engine records the exact completion timestamp (`setDrop_datetime(LocalDateTime.now())`).
+
+**Technologies Used:** 📊 Spring Data JPA, ⏱️ Java Time API, 🔄 State Transitions
+
+---
+
+### ✅ **Task 5: Dispatch Candidate Query Optimization**
+<img align="right" width="44" src="https://img.icons8.com/color/48/000000/radar.png"/>
+
+- Added derived query methods in `DriverRepo`:
+  - `findAllByStatusAndRideStatus(String status, String rideStatus)`
+- Allows the frontend 2-stage dispatch engine to instantly retrieve all approved (`Activated`) and idle (`Free`) drivers to perform Haversine and OSRM proximity ranking.
+
+**Technologies Used:** 📊 Spring Data Query Derivation, ⚡ High-Speed Indexing
+
+---
+
+## 🏗️ **System Architecture**
+
+### 📊 **Component Breakdown:**
 
 | Component | Logo | Responsibility |
 |-----------|:---:|----------------|
@@ -64,7 +122,7 @@ It acts as the single source of truth for the entire ShippSure logistics network
 | **Entity Layer** | <img src="https://img.icons8.com/color/32/000000/entity.png"/> | Relational entity mappings (`Driver`, `Shipment`, `Customer`, `Admin`) |
 | **Database Conduit** | <img src="https://img.icons8.com/color/32/000000/database.png"/> | MySQL 8.0 schema (`ailogistic`) with connection pooling |
 
-### 🔄 End-to-End REST Flow:
+### 🔄 **End-to-End REST Flow:**
 ```
 ShippSure Frontend (Port 2222)
             ↓ (HTTP JSON / REST)
@@ -79,7 +137,7 @@ MySQL Database (Schema: ailogistic on Port 3306)
 
 ---
 
-## 📁 Project Structure
+## 📁 **Project Structure**
 
 ```
 ⚙️ AI-Logistics-Backend/
@@ -91,7 +149,7 @@ MySQL Database (Schema: ailogistic on Port 3306)
 │   │   │   │   ├── 📄 AiLogisticController.java
 │   │   │   │   ├── 📄 CustomerController.java
 │   │   │   │   ├── 📄 DriverController.java
-│   │   │   │   └── 📄 ShipmentController.java
+│   │   │   └── 📄 ShipmentController.java
 │   │   │   ├── 📂 entity/
 │   │   │   │   ├── 📄 Admin.java
 │   │   │   │   ├── 📄 Customer.java
@@ -119,7 +177,7 @@ MySQL Database (Schema: ailogistic on Port 3306)
 
 ---
 
-## 🌐 API Endpoints Reference
+## 🌐 **API Endpoints Reference**
 
 ### 1. 🚚 Driver Fleet Telemetry (`/driver`)
 
@@ -147,7 +205,7 @@ MySQL Database (Schema: ailogistic on Port 3306)
 
 ---
 
-### 📋 Example JSON Payload & Response
+### 📋 **Example JSON Payload & Response**
 
 #### POST /customer/saveorder (Request Body)
 ```json
@@ -188,20 +246,20 @@ MySQL Database (Schema: ailogistic on Port 3306)
 
 ---
 
-## 🚀 Getting Started
+## 🚀 **Getting Started**
 
-### 📋 Prerequisites
+### 📋 **Prerequisites**
 
 | Software | Version | Logo |
 |----------|---------|:---:|
 | ☕ **Java** | 17+ | <img src="https://img.icons8.com/color/24/000000/java-coffee-cup-logo.png"/> |
 | 📦 **Maven** | 3.8+ | <img src="https://img.icons8.com/color/24/000000/maven.png"/> |
 | 🗄️ **MySQL** | 8.0+ | <img src="https://img.icons8.com/color/24/000000/mysql-logo.png"/> |
-| 💻 **IDE** | STS / IntelliJ / Eclipse | <img src="https://img.icons8.com/color/24/000000/visual-studio-code-2019.png"/> |
+| 💻 **IDE** | STS / IntelliJ / Eclipse / VS Code | <img src="https://img.icons8.com/color/24/000000/visual-studio-code-2019.png"/> |
 
 ---
 
-### 📥 Step-by-Step Installation
+### 📥 **Step-by-Step Installation**
 
 #### 1️⃣ Create MySQL Database
 ```sql
@@ -239,7 +297,20 @@ mvn spring-boot:run
 
 ---
 
-## 👤 Author
+## ✅ **Task & Feature Completion Status**
+
+| Task | Logo | Feature Description | Status |
+|:---:|:---:|---------------------|:---:|
+| **Task 1** | <img src="https://img.icons8.com/color/24/000000/api-settings.png"/> | RESTful Microservice Architecture & Endpoints | ✅ Complete |
+| **Task 2** | <img src="https://img.icons8.com/color/24/000000/delivery.png"/> | Driver Fleet Entity & Binary RC/License Persistence | ✅ Complete |
+| **Task 3** | <img src="https://img.icons8.com/color/24/000000/synchronize.png"/> | Dual-Axis Driver State Machine (`Status` & `RideStatus`) | ✅ Complete |
+| **Task 4** | <img src="https://img.icons8.com/color/24/000000/box.png"/> | Shipment Lifecycle & Drop Timestamp Engine | ✅ Complete |
+| **Task 5** | <img src="https://img.icons8.com/color/24/000000/radar.png"/> | Proximity Candidate Query Optimization | ✅ Complete |
+| **Task 6** | <img src="https://img.icons8.com/color/24/000000/lock.png"/> | Credential Externalization & Clean Git Configuration | ✅ Complete |
+
+---
+
+## 👤 **Author**
 
 ### Aniket Singh Chauhan
 
